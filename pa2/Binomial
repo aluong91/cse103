@@ -3,6 +3,18 @@
 import argparse
 import random
 from operator import mul
+from math import factorial
+from random import random
+
+def choose(n, k):
+	return factorial(n) // (factorial(k) * factorial(n - k))
+
+def exact(n, k, p):
+	return choose(n, k) * p**k * (1-p)**(n-k)
+
+def sample(n, p, m):
+	for seq in range(m):
+		yield [int(random() < p) for flip in range(n)]
 
 parser = argparse.ArgumentParser(description='')
 parser.add_argument('-t','--type', help='exact, sample, chebyshev', type=str)
@@ -18,24 +30,42 @@ args = vars(parser.parse_args())
 # Eg to get -p, args['p_heads'].  Or -m, args['number_sequences']
 
 if args['type'] == 'exact': 
-    # TODO Compute the sum of the binomial terms here, and save to variable
-    # binom_sum
-    binom_sum = 1
-    print binom_sum
+	# TODO Compute the sum of the binomial terms here, and save to variable
+	# binom_sum
+	binom_sum = 0
+	for i in range(args['lower'], args['upper'] + 1):
+		binom_sum += exact(args['length'], i, args['p_heads'])
+		"""
+		print args['lower'], args['upper']
+		print i
+		print binom_sum
+		"""
+	print binom_sum
 
 elif args['type'] == 'sample':
-    # TODO Take args['number_sequences'] samples, to approximate the probability
-    # the number of heads lands in the range 
-    #   args['lower'] <= #heads <= args['upper']
-    # Each sample will give the number of biased coin flips out of args['length']
-    #   that come up heads
-    # and save to variable binom_sum
-    # binom_sum
-    binom_sum = 1
-    print binom_sum
+	# TODO Take args['number_sequences'] samples, to approximate the probability
+	# the number of heads lands in the range 
+	#   args['lower'] <= #heads <= args['upper']
+	# Each sample will give the number of biased coin flips out of args['length']
+	#   that come up heads
+	# and save to variable binom_sum
+	# binom_sum
+	n, p, m = int(args['length']), float(args['p_heads']), args['number_sequences']
+	l, u = args['lower'], args['upper']
+	"""
+	n, p, m = 10, .2, 10.0
+	l, u = .1, .3
+	"""
+	count = 0
+	for seq in sample(n, p, m):
+		heads = seq.count(1)
+		if heads >= l and heads <= u:
+			count += 1
+	binom_sum = count / float(m)
+	print binom_sum
 
 elif args['type'] == 'chebyshev':
-    # Compute a ***lower-bound*** on the probability #heads is between 
-    # lower and upper, using chebyshev
-    binom_sum = 1
-    print binom_sum
+	# Compute a ***lower-bound*** on the probability #heads is between 
+	# lower and upper, using chebyshev
+	binom_sum = 1
+	print binom_sum
