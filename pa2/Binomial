@@ -67,5 +67,15 @@ elif args['type'] == 'sample':
 elif args['type'] == 'chebyshev':
 	# Compute a ***lower-bound*** on the probability #heads is between 
 	# lower and upper, using chebyshev
-	binom_sum = 1
-	print binom_sum
+	n, p = float(args['length']), float(args['p_heads'])
+	l, u = float(args['lower']), float(args['upper'])
+	mean = n * p
+	if l <= mean and mean <= u:
+		print 1.0
+	else:
+		if mean < l:
+			epsilon = l - mean
+		else:
+			epsilon = mean - u
+		variance = n * p * (1-p)
+		print variance / (epsilon ** 2)
