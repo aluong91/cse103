@@ -19,9 +19,19 @@ def split(s,v):
 
 	##########
 	# TODO:
+	""""
 	s_l = [x for x in s if x < v]
 	s_v = [x for x in s if x == v]
 	s_r = [x for x in s if x > v]
+	"""
+	s_l, s_v, s_r = [], [], []
+	for x in s:
+		if x < v:
+			s_l.append(x)
+		elif x > v:
+			s_r.append(x)
+		else:
+			s_v.append(x)
 
 
 	##########
@@ -48,7 +58,12 @@ def find_kth_smallest(s, k, c):
 	##########
 	# TODO:
 	s_l, s_v, s_r = split(s, v)
-	kth_smallest = 0
+	if len(s_l) > k:
+		kth_smallest = find_kth_smallest(s_l, k, c)
+	elif len(s_l) + len(s_v) > k:
+		kth_smallest = s_v[0]
+	else:
+		kth_smallest = find_kth_smallest(s_r, k - len(s_l) - len(s_v), c)
 
 	##########
 
